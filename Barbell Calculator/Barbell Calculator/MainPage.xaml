@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Barbell_Calculator.Pages"
+             x:Class="Barbell_Calculator.MainPage">
+
+    <local:PlateCalculatorPage Title="Calculate" IconImageSource="barbellicon.png" />
+    <local:WeightConverterPage IconImageSource="calculatoricon.png" />
+    <local:SettingsPage IconImageSource="settingsicon.png" />
+
+</TabbedPage>
