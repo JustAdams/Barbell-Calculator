@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barbell_Calculator.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,34 +17,58 @@ namespace Barbell_Calculator.Pages
         public PlateCalculatorPage()
         {
             InitializeComponent();
-            PlateOutputText.Text = CalculatePlates();
         }
 
+        /// <summary>
+        /// Reset the entry field when focusing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ClearText(object sender, EventArgs e)
         {
             BarbellWeightInputEntry.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Recalculate and update label with new plate calculations
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void OnInputWeightChanged(object sender, EventArgs e)
         {
             if (!double.TryParse(BarbellWeightInputEntry.Text, out double inputWeight))
             {
-                inputWeight = 45;
+                inputWeight = StandardWeights.BarWeight;
             };
 
-            string result = CalculatePlates(inputWeight);
-            PlateOutputText.Text = result;
+            PlateOutputText.Text = CalculatePlates(inputWeight);
         }
 
-        private string CalculatePlates(double inputWeight = 0)
+        /// <summary>
+        /// Calculate the number of plates needed to add up to a given weight
+        /// </summary>
+        /// <param name="inputWeight"></param>
+        /// <returns>String formatted to list number of plates needed per plate weight</returns>
+        private string CalculatePlates(double inputWeight = 0, bool isLbs = true)
         {
-            // 45, 35, 25, 10, 5
-            double[] usedPlates = new double[6] { 45, 35, 25, 10, 5, 2.5 };
-            int[] plateSum = new int[6] { 0, 0, 0, 0, 0, 0 };
+            double[] usedPlates;
 
-            // Reduce by 45 to eliminate barbell, divide by 2 to calculate plates for a single side
-            inputWeight -= 45;
+            // Subtract bar weight and then divide by 2 to calculate plates needed for a single side
+            if (isLbs)
+            {
+                // 45, 35, 25, 10, 5
+                usedPlates = new double[6] { 45, 35, 25, 10, 5, 2.5 };
+                inputWeight -= StandardWeights.BarWeight;
+            } else
+            {
+                // 25, 20, 15, 10
+                usedPlates = new double[4] { 25, 20, 15, 10 };
+                inputWeight -= StandardWeights.BarWeight / StandardWeights.KgToLbRatio;
+            }
             inputWeight /= 2;
+
+            // Array to store the plate counts in decreasing order
+            int[] plateSum = new int[usedPlates.Length];
 
             StringBuilder sb = new StringBuilder("Plates");
             int currPlate = 0;
